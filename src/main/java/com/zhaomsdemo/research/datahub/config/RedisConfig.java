@@ -25,6 +25,12 @@ public class RedisConfig {
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
         objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
 
+        RedisTemplate<String, Object> redisTemplate = getRedisTemplate(redisConnectionFactory, objectMapper);
+
+        return redisTemplate;
+    }
+
+    private static RedisTemplate<String, Object> getRedisTemplate(RedisConnectionFactory redisConnectionFactory, ObjectMapper objectMapper) {
         Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
@@ -33,7 +39,6 @@ public class RedisConfig {
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashValueSerializer(serializer);
         redisTemplate.afterPropertiesSet();
-
         return redisTemplate;
     }
 }

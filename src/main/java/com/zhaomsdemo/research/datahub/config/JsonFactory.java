@@ -14,11 +14,11 @@ public class JsonFactory {
 
     @Bean
     public Jackson2ObjectMapperBuilder jacksonBuilder() {
-        Jackson2ObjectMapperBuilder b = new Jackson2ObjectMapperBuilder();
-        b.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder = new Jackson2ObjectMapperBuilder();
+        jackson2ObjectMapperBuilder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         JavaTimeModule javaTimeModule = new JavaTimeModule();
         javaTimeModule.addSerializer(new LocalDateTimeSerializer(DateTimeFormatter.ISO_INSTANT));
-        b.modulesToInstall(javaTimeModule);
-        return b;
+        jackson2ObjectMapperBuilder.modulesToInstall(javaTimeModule);
+        return jackson2ObjectMapperBuilder;
     }
 }

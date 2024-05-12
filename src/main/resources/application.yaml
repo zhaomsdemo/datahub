@@ -11,15 +11,19 @@ spring:
     properties:
       hibernate:
         format_sql: true
-    database: db2
+    database: postgresql
     hibernate:
       ddl-auto: create-drop
     generate-ddl: true
     show-sql: true
   datasource:
-    url: jdbc:db2://localhost:50000/testdb
-    username: db2inst1
+    url: jdbc:postgresql://localhost:5432/devdb
+    username: dev
     password: abc123
+    driver-class-name: org.postgresql.Driver
+
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
 server:
   port: 8280
   servlet:

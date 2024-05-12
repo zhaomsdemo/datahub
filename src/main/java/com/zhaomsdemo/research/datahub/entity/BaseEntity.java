@@ -19,10 +19,10 @@ public class BaseEntity {
     private String id;
     @CreatedDate
     @Column
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
     @Column
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date modifiedDate;
     @CreatedBy
     @Column

@@ -31,7 +31,8 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    runtimeOnly 'com.ibm.db2:jcc'
+//    runtimeOnly 'com.ibm.db2:jcc'
+    runtimeOnly 'org.postgresql:postgresql'
 }
 
 tasks.named('test') {

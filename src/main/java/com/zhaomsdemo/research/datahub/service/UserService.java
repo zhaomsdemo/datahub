@@ -1,6 +1,7 @@
 package com.zhaomsdemo.research.datahub.service;
 
 import com.zhaomsdemo.research.datahub.entity.UserEntity;
+import com.zhaomsdemo.research.datahub.exception.UserNotFoundException;
 import com.zhaomsdemo.research.datahub.model.UserModel;
 import com.zhaomsdemo.research.datahub.repository.UserRepository;
 import lombok.AccessLevel;
@@ -21,14 +22,17 @@ public class UserService {
     final RedisTemplate redisTemplate;
     final UserRepository userRepository;
 
-    public void createUser(UserModel user) {
+    public UserModel createUser(UserModel user) {
         user.setCreatedAt(Instant.now());
-        redisTemplate.boundValueOps(user.getId()).set(user);
-        userRepository.save(toUserEntity(user));
+//        redisTemplate.boundValueOps(user.getId()).set(user);
+        UserEntity userEntity = userRepository.save(toUserEntity(user));
+        return toUserModel(userEntity);
     }
 
     public UserModel getUser(String id) {
-        return (UserModel) redisTemplate.boundValueOps(id).get();
+//        return (UserModel) redisTemplate.boundValueOps(id).get();
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        return toUserModel(userEntity);
     }
 
     private UserEntity toUserEntity(UserModel user) {
@@ -39,5 +43,16 @@ public class UserService {
         userEntity.setPhone(user.getPhone());
         userEntity.setGender(user.getGender());
         return userEntity;
+    }
+
+    private UserModel toUserModel(UserEntity userEntity) {
+        UserModel userModel = new UserModel();
+        userModel.setId(userEntity.getId());
+        userModel.setName(userEntity.getName());
+        userModel.setEmail(userEntity.getEmail());
+        userModel.setBirthday(userEntity.getBirthday());
+        userModel.setPhone(userEntity.getPhone());
+        userModel.setGender(userEntity.getGender());
+        return userModel;
     }
 }

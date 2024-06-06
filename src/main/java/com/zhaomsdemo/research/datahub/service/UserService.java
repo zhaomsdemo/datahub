@@ -12,6 +12,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -33,6 +36,13 @@ public class UserService {
 //        return (UserModel) redisTemplate.boundValueOps(id).get();
         UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         return toUserModel(userEntity);
+    }
+
+    public List<UserModel> findAllUsers() {
+        List<UserEntity> userEntities = userRepository.findAll();
+        List<UserModel> userModels = new ArrayList<>();
+        userModels = userEntities.stream().map(userEntity -> toUserModel(userEntity)).collect(Collectors.toUnmodifiableList());
+        return userModels;
     }
 
     private UserEntity toUserEntity(UserModel user) {

@@ -13,7 +13,7 @@ spring:
         format_sql: true
     database: postgresql
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     generate-ddl: true
     show-sql: true
   datasource:
@@ -23,8 +23,15 @@ spring:
     driver-class-name: org.postgresql.Driver
 
   autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
 server:
   port: 8280
   servlet:
     context-path: "/data-hub"
+
+jwt:
+  token:
+    secretKey: test
+    refreshTime: 60000
+    expireTime: 120000

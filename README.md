@@ -37,3 +37,7 @@ public class SecurityConfig {
         return http.build();
     }
 }
+
+#application.properties
+spring.security.oauth2.resourceserver.jwt.issuer-uri=https://your-issuer-uri.com
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri=https://your-jwk-set-uri.com

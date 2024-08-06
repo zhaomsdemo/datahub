@@ -2,7 +2,6 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.2'
     id 'io.spring.dependency-management' version '1.1.6'
-    id 'org.unbroken-dome.xjc' version '2.0.0'
 }
 
 group = 'com.zhaomsdemo.research'
@@ -33,44 +32,49 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     implementation 'org.springframework.boot:spring-boot-starter-web-services'
-    implementation 'jakarta.xml.ws:jakarta.xml.ws-api:3.0.1'
-    implementation 'com.sun.xml.ws:jaxws-ri:3.0.1'
-    implementation 'org.jvnet.jaxb2_commons:jaxb2-basics:1.11.1'
+    implementation 'org.apache.cxf:cxf-spring-boot-starter-jaxws:4.0.5' // 适配 Spring Boot 3 的最新版本
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
-    implementation 'com.sun.xml.bind:jaxb-impl:2.3.1'
-    implementation 'com.sun.xml.bind:jaxb-xjc:2.3.1'
-    implementation 'com.sun.istack:istack-commons-runtime:3.0.12'
+    implementation 'org.glassfish.jaxb:jaxb-runtime:3.0.2' // 使用适配 JDK 17 的 JAXB 实现
     implementation 'javax.activation:activation:1.1.1'
-    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
+    implementation 'com.sun.istack:istack-commons-runtime:3.0.12'
+    implementation 'javax.xml.ws:jaxws-api:2.3.1'
+    implementation 'com.sun.xml.ws:jaxws-rt:3.0.1' // JAX-WS 运行时实现
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
 
-task generateJaxb {
-    doLast {
-        def xjcDir = file("$buildDir/generated-sources/xjc")
-        mkdir xjcDir
-        ant {
-            taskdef name: 'xjc', classname: 'com.sun.tools.xjc.XJCTask', classpath: configurations.compileClasspath.asPath
-            xjc(destdir: xjcDir, package: 'com.example.generated') {
-                schema(dir: 'src/main/resources/wsdl', includes: '*.wsdl')
-                binding(dir: 'src/main/resources/wsdl', includes: '*.xjb') // 如果有绑定文件
-            }
-        }
-    }
+configurations {
+    cxfCodegen
+}
+
+dependencies {
+    cxfCodegen 'org.apache.cxf:cxf-tools-wsdlto-core:4.0.5'
+    cxfCodegen 'org.apache.cxf:cxf-tools-wsdlto-databinding-jaxb:4.0.5'
+    cxfCodegen 'org.apache.cxf:cxf-tools-wsdlto-frontend-jaxws:4.0.5'
+}
+
+task generateWsdlClient(type: JavaExec) {
+    main = 'org.apache.cxf.tools.wsdlto.WSDLToJava'
+    classpath = configurations.cxfCodegen + sourceSets.main.compileClasspath
+    args = [
+            '-d', "$buildDir/generated-sources/cxf",
+            '-p', 'com.example.generated',
+            'src/main/resources/wsdl/WeatherWebService.wsdl' // 替换为你的 WSDL 文件路径
+    ]
 }
 
 compileJava {
-    dependsOn generateJaxb
+    dependsOn generateWsdlClient
 }
 
 sourceSets {
     main {
         java {
-            srcDirs += "$buildDir/generated-sources/xjc"
+            srcDirs += "$buildDir/generated-sources/cxf"
         }
     }
 }
+
 

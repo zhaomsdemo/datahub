@@ -90,4 +90,5 @@
         }
     }
     ```
-
+7. **命令**
+   ./wsdl2java -p com.zjh -d /home/zhaojh/files/output/WeatherWebService -client -exsh false -dns true -dex true -verbose /home/zhaojh/projects/weatherinfo/src/main/resources/wsdl/WeatherWebService.wsd
